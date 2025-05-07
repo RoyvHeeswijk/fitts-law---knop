@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 interface Position {
     x: number;
@@ -46,24 +46,15 @@ export default function EvilButton() {
             Math.pow(mouseX - buttonCenterX, 2) + Math.pow(mouseY - buttonCenterY, 2)
         );
 
-        // If mouse is within 100px of button, move it
-        if (distance < 100) {
-            setIsMoving(true);
-            setTimeout(() => {
-                setPosition(getRandomPosition());
-                setIsMoving(false);
-            }, 100);
+        // If mouse is within 150px of button, move it immediately
+        if (distance < 150) {
+            setPosition(getRandomPosition());
         }
     };
 
     // Handle button click
     const handleButtonClick = () => {
-        setClickCount(prev => prev + 1);
-        setIsVisible(false);
-        setTimeout(() => {
-            setPosition(getRandomPosition());
-            setIsVisible(true);
-        }, 1000);
+        setPosition(getRandomPosition());
     };
 
     // Show button after 3 clicks on the container
@@ -71,21 +62,10 @@ export default function EvilButton() {
         if (clickCount < 2) {
             setClickCount(prev => prev + 1);
         } else if (clickCount === 2) {
-            setIsVisible(true);
             setPosition(getRandomPosition());
+            setIsVisible(true);
         }
     };
-
-    // Auto-hide button after 3 seconds
-    useEffect(() => {
-        let timeout: NodeJS.Timeout;
-        if (isVisible) {
-            timeout = setTimeout(() => {
-                setIsVisible(false);
-            }, 3000);
-        }
-        return () => clearTimeout(timeout);
-    }, [isVisible]);
 
     return (
         <div
@@ -100,12 +80,10 @@ export default function EvilButton() {
             {isVisible && (
                 <button
                     ref={buttonRef}
-                    className={`absolute transition-all duration-300 ease-in-out px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 ${isMoving ? 'opacity-50' : 'opacity-100'
-                        }`}
+                    className="absolute transition-none px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600"
                     style={{
                         left: `${position.x}px`,
                         top: `${position.y}px`,
-                        transform: `scale(${isMoving ? 0.9 : 1})`,
                     }}
                     onClick={handleButtonClick}
                 >
